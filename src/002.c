@@ -17,7 +17,7 @@ int main(void)
 	{
 		scanf("%d %d", &row, &col);
 
-		//  mallock data_array space
+		//  malloc data_array space
 		char **data_array;
 		data_array = (char **) malloc(row * sizeof(char *));
 		for (row_count = 0; row_count < row; row_count++)
@@ -29,6 +29,11 @@ int main(void)
 				data_array[row_count][col_count] = 0;
 			}
 		}
+
+
+		//  read input data to data_array
+
+		//  algorithm
 
 
 		//  print data array content
