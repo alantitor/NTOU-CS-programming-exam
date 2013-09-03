@@ -1,6 +1,13 @@
+/*
+ * 邊緣偵測
+ *
+ * @Author: Alan Titor
+ * @Date: 2013/8/30
+ */
+
+
 #include <stdio.h>
 #include <stdlib.h>
-
 
 
 int main(void)

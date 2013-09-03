@@ -1,3 +1,11 @@
+/*
+ * 一維陣列反轉 I
+ *
+ * @Author: Alan Titor
+ * @Date: 2013/8/30
+ */
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

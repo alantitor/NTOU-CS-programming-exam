@@ -1,3 +1,11 @@
+/*
+ * 計算陣列中所有元素的立方和
+ *
+ * @Author: Alan Titor
+ * @Date: 2013/8/30
+ */
+
+
 #include <stdio.h>
 
 int pow1(int bas, int exp);
