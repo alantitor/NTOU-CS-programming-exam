@@ -21,11 +21,11 @@
   problem:
 		unsigned long long int size: 0 to 18,446,744,073,709,551,615
  */
-unsigned long long int mouse_number[2][65535] = {0};
+unsigned long long int mouse_number[2][65536] = {0};
 
 int main(void)
 {
-	unsigned long int N = 0;
+	int N = 0;
 
 	mouse_number[0][0] = 1;
 	mouse_number[1][0] = 0;
