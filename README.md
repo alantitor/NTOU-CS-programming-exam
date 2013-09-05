@@ -1,12 +1,21 @@
 NTOU-CS-programming-exam
-=========
+========================
 
-tutorial of programming exam
+Tutorial of 2013 NTOU CS programming exam
 
-If you are at linux environment,  you can auto input data.
-ex:
-	./test < test.data
-	or
-	cat test.data | ./test
 
-	"./test" is your excutable file and "test.data" is the data you want input
+Using *.data file
+----------------
+
+In linux environment,  you can auto input test data.
+
+1. redirect
+
+		./test < test.data
+	
+2.  cat
+
+		cat test.data | ./test
+
+
+"./test" is your excutable file and "test.data" is the data you want input
