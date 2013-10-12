@@ -12,7 +12,7 @@
  *
  *	max steps is row * col.  use it as loop bound.
  *
- *	
+ *
  */
 
 
@@ -21,7 +21,7 @@
 #include <stdbool.h>
 
 
-//  define direction parameters
+/*  define direction parameters  */
 #define UUR 0
 #define UUR_X  1
 #define UUR_Y  2
@@ -59,14 +59,59 @@ typedef struct {
 	int col;
 } coordinate;
 
-int ** board = NULL;
-int board_row = 0, board_col = 0;
+int ** board = NULL;  //  board array
+int board_row = 0, board_col = 0;  //  board size
+int coordinate_start_row = 0, coordinate_start_col = 0;
 int step_count = 1;
 int max_steps = 0;
 int eureka = 0;
 
-//  delete
-int d;
+void print_board(char * message);
+bool avail_position(int coordinate_now_row, int coordinate_now_col, int * coordinate_next_row, int * coordinate_next_col, int direction);
+void trace_board(const int coordinate_now_row, const int coordinate_now_col, const int direction_come);
+
+int main(void)
+{
+	/*  1. get input parameters  */
+	scanf("%d %d", &board_row, &board_col);
+	int temp_row = 0, temp_col = 0;
+	scanf("%d %d", &temp_row, &temp_col);  //  real coordinate.  we need transfer to virtual coordinate
+	coordinate_start_row = temp_row - 1;
+	coordinate_start_col = temp_col - 1;
+	int coordinate_now_row = 0, coordinate_now_col = 0;
+	coordinate_now_row = temp_row - 1;
+	coordinate_now_col = temp_col - 1;
+	max_steps = board_row * board_col;
+
+
+	/*  2. create board  */
+	board = (int **)malloc(board_row * sizeof(int *));
+	int index_row = 0, index_col = 0;
+	for(index_row = 0; index_row < board_row; index_row++) {
+		board[index_row] = (int *)malloc(board_col * sizeof(int));
+		for(index_col = 0; index_col < board_col; index_col++) {
+			board[index_row][index_col] = -1;  //  -1 mean you can go to there
+		}
+	}
+
+
+	/*
+	   as time gose by, I still walking.  Orz  /|_
+	*/
+
+
+	/*  3. start trace  */
+	int direction = UUR;  //  0 ~ 7
+	board[coordinate_now_row][coordinate_now_col] = step_count;
+	trace_board(coordinate_now_row, coordinate_now_col, direction);
+
+
+
+	/*  4. print result  */
+	printf("eureka: %d\n", eureka);
+
+	return 0;
+}
 
 void print_board(char * message)
 {
@@ -85,10 +130,34 @@ void print_board(char * message)
 	return ;
 }
 
+void trace_board(const int coordinate_now_row, const int coordinate_now_col, const int direction_come)
+{
+	//print_board("");
+	step_count++;
+	int coordinate_next_row = coordinate_now_row;
+	int coordinate_next_col = coordinate_now_col;
+	int direction_next = (direction_come + 1) % 8;
+	while(direction_next != direction_come) {
+		if(avail_position(coordinate_now_row, coordinate_now_col, &coordinate_next_row, &coordinate_next_col, direction_next) == true) {
+			board[coordinate_next_row][coordinate_next_col] = step_count;
+			trace_board(coordinate_next_row, coordinate_next_col, direction_next);
+		}
+		//printf("%d %d %d %d %d\n", coordinate_now_row, coordinate_now_col, coordinate_next_row, coordinate_next_col, direction_next);
+		direction_next = (direction_next + 1) % 8;
+	}
+
+	board[coordinate_now_row][coordinate_now_col] = -1;
+	step_count--;
+	return ;
+}
+
 bool avail_position(int coordinate_now_row, int coordinate_now_col, int * coordinate_next_row, int * coordinate_next_col, int direction)
 {
 	switch(direction) {
 		case UUR:
+			if((coordinate_now_row - 2) == coordinate_start_row && (coordinate_now_col + 1) == coordinate_start_col) {
+				eureka++;
+			}
 			if((coordinate_now_row - 2) >= 0 && (coordinate_now_col + 1) <= (board_col - 1) && board[coordinate_now_row - 2][coordinate_now_col + 1] == -1) {
 				*coordinate_next_row = coordinate_now_row - 2;
 				*coordinate_next_col = coordinate_now_col + 1;
@@ -96,6 +165,9 @@ bool avail_position(int coordinate_now_row, int coordinate_now_col, int * coordi
 			}
 			break;
 		case URR:
+			if((coordinate_now_row - 1) == coordinate_start_row && (coordinate_now_col + 2) == coordinate_start_col) {
+				eureka++;
+			}
 			if((coordinate_now_row - 1) >= 0 && (coordinate_now_col + 2) <= (board_col - 1) && board[coordinate_now_row - 1][coordinate_now_col + 2] == -1) {
 				*coordinate_next_row = coordinate_now_row - 1;
 				*coordinate_next_col = coordinate_now_col + 2;
@@ -103,6 +175,9 @@ bool avail_position(int coordinate_now_row, int coordinate_now_col, int * coordi
 			}
 			break;
 		case DRR:
+			if((coordinate_now_row + 1) == coordinate_start_row && (coordinate_now_col + 2) == coordinate_start_col) {
+				eureka++;
+			}
 			if((coordinate_now_row + 1) <= (board_row - 1) && (coordinate_now_col + 2) <= (board_col - 1) && board[coordinate_now_row + 1][coordinate_now_col + 2] == -1) {
 				*coordinate_next_row = coordinate_now_row + 1;
 				*coordinate_next_col = coordinate_now_col + 2;
@@ -110,6 +185,9 @@ bool avail_position(int coordinate_now_row, int coordinate_now_col, int * coordi
 			}
 			break;
 		case DDR:
+			if((coordinate_now_row + 2) == coordinate_start_row && (coordinate_now_col + 1) == coordinate_start_col) {
+				eureka++;
+			}
 			if((coordinate_now_row + 2) <= (board_row - 1) && (coordinate_now_col + 1) <= (board_col - 1) && board[coordinate_now_row + 2][coordinate_now_col + 1] == -1) {
 				*coordinate_next_row = coordinate_now_row + 2;
 				*coordinate_next_col = coordinate_now_col + 1;
@@ -117,13 +195,19 @@ bool avail_position(int coordinate_now_row, int coordinate_now_col, int * coordi
 			}
 			break;
 		case DDL:
+			if((coordinate_now_row + 2) == coordinate_start_row && (coordinate_now_col - 1) == coordinate_start_col) {
+				eureka++;
+			}
 			if((coordinate_now_row + 2) <= (board_row - 1) && (coordinate_now_col - 1) >= 0 && board[coordinate_now_row + 2][coordinate_now_col - 1] == -1) {
-				*coordinate_next_row = coordinate_now_row - 2;
+				*coordinate_next_row = coordinate_now_row + 2;
 				*coordinate_next_col = coordinate_now_col - 1;
 				return true;
 			}
 			break;
 		case DLL:
+			if((coordinate_now_row + 1) == coordinate_start_row && (coordinate_now_col - 2) == coordinate_start_col) {
+				eureka++;
+			}
 			if((coordinate_now_row + 1) <= (board_row - 1) && (coordinate_now_col - 2) >= 0 && board[coordinate_now_row + 1][coordinate_now_col - 2] == -1) {
 				*coordinate_next_row = coordinate_now_row + 1;
 				*coordinate_next_col = coordinate_now_col - 2;
@@ -131,6 +215,9 @@ bool avail_position(int coordinate_now_row, int coordinate_now_col, int * coordi
 			}
 			break;
 		case ULL:
+			if((coordinate_now_row - 1) == coordinate_start_row && (coordinate_now_col - 2) == coordinate_start_col) {
+				eureka++;
+			}
 			if((coordinate_now_row - 1) >= 0 && (coordinate_now_col - 2) >= 0 && board[coordinate_now_row - 1][coordinate_now_col - 2] == -1) {
 				*coordinate_next_row = coordinate_now_row - 1;
 				*coordinate_next_col = coordinate_now_col - 2;
@@ -138,6 +225,9 @@ bool avail_position(int coordinate_now_row, int coordinate_now_col, int * coordi
 			}
 			break;
 		case UUL:
+			if((coordinate_now_row - 2) == coordinate_start_row && (coordinate_now_col - 1) == coordinate_start_col) {
+				eureka++;
+			}
 			if((coordinate_now_row - 2) >= 0 && (coordinate_now_col - 1) >= 0 && board[coordinate_now_row - 2][coordinate_now_col - 1] == -1) {
 				*coordinate_next_row = coordinate_now_row - 2;
 				*coordinate_next_col = coordinate_now_col - 1;
@@ -150,70 +240,4 @@ bool avail_position(int coordinate_now_row, int coordinate_now_col, int * coordi
 	}
 
 	return false;
-}
-
-void trace_board(const int coordinate_now_row, const int coordinate_now_col, const int direction_come)
-{
-	step_count++;
-
-	int coordinate_next_row = coordinate_now_row;
-	int coordinate_next_col = coordinate_now_col;
-	int direction_next = (direction_come + 1) % 8;
-print_board("");//scanf("%d", &d);
-	while(direction_next != direction_come) {
-		if(avail_position(coordinate_now_row, coordinate_now_col, &coordinate_next_row, &coordinate_next_col, direction_next) == true) {
-			board[coordinate_next_row][coordinate_next_col] = step_count;
-print_board("");//scanf("%d", &d);
-			trace_board(coordinate_next_row, coordinate_next_col, direction_next);
-		}
-printf("%d %d %d %d %d\n", coordinate_now_row, coordinate_now_col, coordinate_next_row, coordinate_next_col, direction_next);
-		direction_next = (direction_next + 1) % 8;
-	}
-
-	board[coordinate_now_row][coordinate_now_col] = -1;
-print_board("");//scanf("%d", &d);
-	step_count--;
-	return ;
-}
-
-int main(void)
-{
-	/*  1. get input parameters  */
-	scanf("%d %d", &board_row, &board_col);
-	int temp_row = 0, temp_col = 0;
-	scanf("%d %d", &temp_row, &temp_col);  //  real coordinate.  we need transfer to virtual coordinate
-	int coordinate_now_row = 0, coordinate_now_col = 0;
-	coordinate_now_row = temp_row - 1;
-	coordinate_now_col = temp_col - 1;
-	max_steps = board_row * board_col;
-
-
-	/*  2. create board  */
-	board = (int **)malloc(board_row * sizeof(int *));
-	int index_row = 0, index_col = 0;
-	for(index_row = 0; index_row < board_row; index_row++) {
-		board[index_row] = (int *)malloc(board_col * sizeof(int));
-		for(index_col = 0; index_col < board_col; index_col++) {
-			board[index_row][index_col] = -1;  //  -1 mean you can go to there
-		}
-	}
-	print_board("init board");
-
-
-	/*
-	   as time gose by, I still walking.  Orz  /|_
-	*/
-
-
-	/*  3. start trace  */
-	int direction = UUR;  //  0 ~ 7
-	board[coordinate_now_row][coordinate_now_col] = step_count;
-	trace_board(coordinate_now_row, coordinate_now_col, direction);
-
-
-
-	/*  4. print resoult  */
-
-
-	return 0;
 }
